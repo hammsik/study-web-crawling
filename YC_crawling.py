@@ -3,7 +3,7 @@ from selenium.webdriver import ActionChains
 import time 
 
 driver = webdriver.Chrome('C:\WooooooooooW\etc\chromedriver_win32\chromedriver') 
-driver.get("https://www.youtube.com/results?search_query=%EB%A9%94%EC%9D%B4%ED%94%8C") 
+driver.get("https://www.youtube.com/feed/trending") 
 
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.common.by import By
@@ -37,6 +37,8 @@ for c in contents:
     action.move_to_element(toClick).click().perform()
     # 동영상 클릭
     time.sleep(2)
+    html.send_keys(Keys.END)
+    time.sleep(0.5)
     html.send_keys(Keys.END)
     print(driver.find_element(By.XPATH, '//*[@id="title"]/h1/yt-formatted-string').text)
     comments = driver.find_element(By.TAG_NAME, "ytd-comments")
