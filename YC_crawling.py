@@ -7,15 +7,15 @@ import time
 driver = webdriver.Chrome('C:\WooooooooooW\etc\chromedriver_win32\chromedriver') 
 driver.get("https://www.youtube.com/results?search_query=s23") 
 html = driver.find_element(By.TAG_NAME, "html")
+add = True
 
 def loadAllContents(): 
     prev_contents_len = 0 
     while True: 
         time.sleep(2) 
         contents = driver.find_elements(By.TAG_NAME, 'ytd-video-renderer') 
-        current_contents_len = len(contents) 
-        print("현재 로드된 영상 개수:", current_contents_len) 
-        if prev_contents_len == current_contents_len or current_contents_len > 100: 
+        print("현재 로드된 영상 개수:", len(contents)) 
+        if prev_contents_len == len(contents) or len(contents) > 10: 
             break 
         prev_contents_len = len(contents) 
         html.send_keys(Keys.END) 
@@ -25,12 +25,6 @@ def pickVideo():
     cnt = 0
     for c in contents:
         time.sleep(1)
-
-        # 유튜브프리미엄 광고 팝업 닫기
-        try:    
-            html.find_element(By.XPATH, '//*[@id="dismiss-button"]/yt-button-shape/button/yt-touch-feedback-shape/div/div[2]').click()
-        except:
-            pass
 
         # 동영상 클릭
         toClick = c.find_element(By.TAG_NAME, "img")
@@ -48,12 +42,36 @@ def pickVideo():
         try:
             header = comments.find_element(By.XPATH, '//*[@id="count"]/yt-formatted-string/span[2]')
             print("댓글 수:", header.text)
+            loadAllComments()
         except:
             print("댓글 없음")
         print()
 
         driver.back()
         cnt += 1
+
+def loadAllComments():
+    prev_comment_len = 0
+    while True:
+        time.sleep(2)
+
+        if add == True:
+            closeAd()
+
+        comments = driver.find_element(By.TAG_NAME, "ytd-comments")
+        comments = comments.find_elements(By.XPATH, '//*[@id="sections"]/div[@id="contents"]/ytd-comment-thread-renderer')
+        if prev_comment_len == len(comments):
+            break
+        prev_comment_len = len(comments)
+        html.send_keys(Keys.END)
+
+def closeAd():
+    # 유튜브프리미엄 광고 팝업 닫기
+    try:    
+        html.find_element(By.XPATH, '//*[@id="dismiss-button"]/yt-button-shape/button/yt-touch-feedback-shape/div/div[2]').click()
+        add = False
+    except:
+        pass
 
 #원하는 영상으로 스크롤 후 클릭하기 위한 ActionChains 객체 생성
 action = ActionChains(driver)
