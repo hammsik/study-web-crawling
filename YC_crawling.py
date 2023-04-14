@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys 
 from selenium.webdriver.common.by import By
-from openpyxl import * 
+from openpyxl import *
 import time 
 import traceback
 
@@ -64,7 +64,7 @@ def loadAllComments():
         time.sleep(1)
         comments = html.find_elements(By.XPATH, '//*[@id="contents"]/ytd-comment-thread-renderer')
         print("현재 로드 된 댓글 개수:", prev_comment_len, len(comments))
-        if prev_comment_len == len(comments) or len(comments) > 100:
+        if prev_comment_len == len(comments) or len(comments) > 3000:
             print("로드완료:", prev_comment_len, len(comments))
             break
         prev_comment_len = len(comments)
@@ -125,28 +125,42 @@ def closeAd():
         pass
 
 if  __name__  ==  "__main__" :
-    search_key = "뉴스" # 검색할 단어 
+    keyWordList = [
+        '#인기급상승'
+        '이슈',
+        '예능',
+        '영화',
+        '여가',
+        '학습',
+        '여행',
+        '게임',
+        '먹방',
+        '패션'
+    ]
 
-    excelfile = load_workbook('test.xlsx') # test.xlsx 파일을 load 
-    excelfile.create_sheet(index=3, title=search_key) # sheet를 검색할 단어 이름으로 생성 
-    sheet = excelfile[search_key] # 생성한 시트를 변수에 할당 
-    ti = sheet.cell(row=1, column=1) # 시트의 1행, 1열에 "영상 제목"이라는 문자열 삽입 
-    ti.value = "영상 제목" 
+    for keyWord in keyWordList:
+        search_key = keyWord # 검색할 단어 
 
-    comment_list = sheet.cell(row=1, column=2) # 시트의 1행, 2열에 "댓글"이라는 문자열 삽입 
-    comment_list.value = "댓글" 
-    excelfile.save('./test.xlsx') # 파일 저장
+        excelfile = load_workbook('test.xlsx') # test.xlsx 파일을 load 
+        excelfile.create_sheet(index=3, title=search_key) # sheet를 검색할 단어 이름으로 생성 
+        sheet = excelfile[search_key] # 생성한 시트를 변수에 할당 
+        ti = sheet.cell(row=1, column=1) # 시트의 1행, 1열에 "영상 제목"이라는 문자열 삽입 
+        ti.value = "영상 제목" 
 
-    url = 'https://www.youtube.com/results?search_query={}'.format(search_key)
-    driver = webdriver.Chrome('C:\WooooooooooW\etc\chromedriver_win32\chromedriver')
-    driver.get(url)
-    options = webdriver.ChromeOptions()
-    options.add_argument("disable-gpu")
-    # time.sleep(200)
-    # driver.set_window_size(800, 1080)
-    html = driver.find_element(By.TAG_NAME, "html")
-    #원하는 영상으로 스크롤 후 클릭하기 위한 ActionChains 객체 생성
-    action = ActionChains(driver)
-    contents = loadAllContents()
-    print("최종 로드된 영상 개수:", len(contents))
-    pickVideo(sheet)
+        comment_list = sheet.cell(row=1, column=2) # 시트의 1행, 2열에 "댓글"이라는 문자열 삽입 
+        comment_list.value = "댓글" 
+        excelfile.save('./test.xlsx') # 파일 저장
+
+        url = 'https://www.youtube.com/results?search_query={}'.format(search_key)
+        driver = webdriver.Chrome('C:\WooooooooooW\etc\chromedriver_win32\chromedriver')
+        driver.get(url)
+        options = webdriver.ChromeOptions()
+        options.add_argument("disable-gpu")
+        # time.sleep(200)
+        # driver.set_window_size(800, 1080)
+        html = driver.find_element(By.TAG_NAME, "html")
+        #원하는 영상으로 스크롤 후 클릭하기 위한 ActionChains 객체 생성
+        action = ActionChains(driver)
+        contents = loadAllContents()
+        print("최종 로드된 영상 개수:", len(contents))
+        pickVideo(sheet)
