@@ -11,3 +11,7 @@ ti.value = "영상 제목"
 comment_list = sheet.cell(row=1, column=2) # 시트의 1행, 2열에 "댓글"이라는 문자열 삽입 
 comment_list.value = "댓글" 
 excelfile.save('./test.xlsx') # 파일 저장
+for i in range(1, 11):
+
+    sheet.append(['니알닝ㄹ','sdfsdf', i])
+excelfile.save('./test.xlsx')
